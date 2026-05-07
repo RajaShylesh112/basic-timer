@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,17 +62,29 @@ namespace BasicTimer
 
         private void MenuItem_ToggleTitleBar_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowStyle == WindowStyle.None)
+            try
             {
-                WindowStyle = WindowStyle.SingleBorderWindow;
-                ResizeMode = ResizeMode.CanResizeWithGrip;
-                VM.WindowHeight = ActualHeight + SystemParameters.WindowCaptionHeight * 2;
+                if (WindowStyle == WindowStyle.None)
+                {
+                    // To show title bar, we need to disable transparency first
+                    AllowsTransparency = false;
+                    WindowStyle = WindowStyle.SingleBorderWindow;
+                    ResizeMode = ResizeMode.CanResizeWithGrip;
+                    VM.WindowHeight = ActualHeight + SystemParameters.WindowCaptionHeight * 2;
+                }
+                else
+                {
+                    // To hide title bar, enable transparency and set to None
+                    WindowStyle = WindowStyle.None;
+                    ResizeMode = ResizeMode.NoResize;
+                    AllowsTransparency = true;
+                    VM.WindowHeight = ActualHeight - SystemParameters.WindowCaptionHeight * 2;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                WindowStyle = WindowStyle.None;
-                ResizeMode = ResizeMode.NoResize;
-                VM.WindowHeight = ActualHeight - SystemParameters.WindowCaptionHeight * 2;
+                MessageBox.Show($"Error toggling title bar: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -88,24 +100,23 @@ namespace BasicTimer
                 DragMove();
         }
 
-        private void MenuItem_SelectColors_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new ColorPickerWindow();
-            win.ShowDialog();
-            VM.SetColor(win.BackgroundBrush, win.ForegroundBrush);
-        }
 
-        private void MenuItem_Palette_Click(object sender, RoutedEventArgs e)
-        {
-            MenuItem menuItem = (MenuItem)sender;
-            VM.SetColor(menuItem.Background, menuItem.Foreground);
-        }
 
         private void MenuItem_ShowTitle_Click(object sender, RoutedEventArgs e)
         {
             var win = new SetTitleWindow(VM.Title);
-            win.ShowDialog();
-            VM.Title = win.NewTitle;
+            if (win.ShowDialog() == true)
+            {
+                VM.Title = win.NewTitle;
+            }
+        }
+
+        private void MenuItem_ColorPreset_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem && menuItem.Tag is string colorName)
+            {
+                VM.SetColorPreset(colorName);
+            }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -131,9 +142,143 @@ namespace BasicTimer
         private void MenuItem_SetTime_Click(object sender, RoutedEventArgs e)
         {
             var win = new SetTimeWindow(VM.Timer.Minutes, VM.Timer.Seconds);
-            win.ShowDialog();
-            if (win.TotalSeconds is not null)
+            if (win.ShowDialog() == true && win.TotalSeconds is not null)
+            {
                 VM.Timer.Set(win.TotalSeconds.Value);
+            }
+        }
+
+        private void Label_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // Start inline editing on double-click
+            StartInlineEdit();
+        }
+
+        private void StartInlineEdit()
+        {
+            VM.EditableText = VM.Text;
+            TimerLabel.Visibility = Visibility.Collapsed;
+            EditTextBox.Visibility = Visibility.Visible;
+            EditTextBox.SelectAll();
+            EditTextBox.Focus();
+        }
+
+        private void EndInlineEdit(bool save = false)
+        {
+            if (save)
+            {
+                // Parse the edited text and set the timer
+                if (TryParseTimeString(VM.EditableText, out int hours, out int minutes, out int seconds))
+                {
+                    VM.Timer.Set(hours, minutes, seconds);
+                }
+            }
+            
+            EditTextBox.Visibility = Visibility.Collapsed;
+            TimerLabel.Visibility = Visibility.Visible;
+        }
+
+        private bool TryParseTimeString(string timeStr, out int hours, out int minutes, out int seconds)
+        {
+            hours = 0;
+            minutes = 0;
+            seconds = 0;
+
+            if (string.IsNullOrWhiteSpace(timeStr))
+                return false;
+
+            // Remove negative sign if present for parsing
+            bool isNegative = timeStr.StartsWith("-");
+            if (isNegative)
+                timeStr = timeStr.Substring(1);
+
+            string[] parts = timeStr.Split(':');
+            
+            try
+            {
+                if (parts.Length == 2)
+                {
+                    // MM:SS format
+                    minutes = int.Parse(parts[0]);
+                    seconds = int.Parse(parts[1]);
+                }
+                else if (parts.Length == 3)
+                {
+                    // HH:MM:SS format
+                    hours = int.Parse(parts[0]);
+                    minutes = int.Parse(parts[1]);
+                    seconds = int.Parse(parts[2]);
+                }
+                else
+                {
+                    return false;
+                }
+
+                // Apply negative if needed
+                if (isNegative)
+                {
+                    hours = -hours;
+                    minutes = -minutes;
+                    seconds = -seconds;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void EditTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    EndInlineEdit(true);
+                    e.Handled = true;
+                    break;
+                case Key.Escape:
+                    EndInlineEdit(false);
+                    e.Handled = true;
+                    break;
+            }
+        }
+
+        private void EditTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            EndInlineEdit(true);
+        }
+
+        private void MenuItem_QuickPresets_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var win = new QuickPresetsWindow();
+                if (win.ShowDialog() == true && win.SelectedSeconds.HasValue)
+                {
+                    VM.Timer.Set(win.SelectedSeconds.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening Quick Presets: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void MenuItem_SessionHistory_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var win = new SessionHistoryWindow(VM.SessionHistory);
+                win.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening Session History: {ex.Message}", "Error", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

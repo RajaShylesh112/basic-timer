@@ -34,12 +34,17 @@ namespace BasicTimer
         private void SaveAndClose()
         {
             NewTitle = TitleTextbox.Text;
+            DialogResult = true;
             Close();
         }
 
         private void Button_OK_Click(object sender, RoutedEventArgs e) => SaveAndClose();
 
-        private void Button_Cancel_Click(object sender, RoutedEventArgs e) => Close();
+        private void Button_Cancel_Click(object sender, RoutedEventArgs e) 
+        {
+            DialogResult = false;
+            Close();
+        }
 
         private void TitleTextbox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -49,6 +54,7 @@ namespace BasicTimer
             }
             else if (e.Key == Key.Escape)
             {
+                DialogResult = false;
                 Close();
             }
         }

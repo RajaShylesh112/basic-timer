@@ -11,7 +11,20 @@ namespace BasicTimer
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public int TotalSeconds => Minutes * 60 + Seconds;
+        public int TotalSeconds => Hours * 3600 + Minutes * 60 + Seconds;
+
+        private int _hours;
+        public int Hours
+        {
+            get => _hours;
+            set
+            {
+                _hours = value;
+                if (_hours < 0)
+                    _hours = 0;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Hours)));
+            }
+        }
 
         private int _minutes;
         public int Minutes
@@ -20,6 +33,17 @@ namespace BasicTimer
             set
             {
                 _minutes = value;
+                while (_minutes >= 60)
+                {
+                    Hours += 1;
+                    _minutes -= 60;
+                }
+                while (_minutes < 0 && Hours > 0)
+                {
+                    Hours -= 1;
+                    _minutes += 60;
+                }
+                
                 if (_minutes < 0)
                     _minutes = 0;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Minutes)));

@@ -52,5 +52,29 @@ namespace BasicTimer
             }
             catch (FormatException) { }
         }
+        
+        private void Button_OK_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
+        }
+
+        private void Button_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+        
+        private void ColorPickerWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Button_OK_Click(sender, e);
+            }
+            else if (e.Key == Key.Escape)
+            {
+                Button_Cancel_Click(sender, e);
+            }
+        }
     }
 }

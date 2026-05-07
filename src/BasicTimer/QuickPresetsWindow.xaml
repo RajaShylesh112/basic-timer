@@ -1,0 +1,63 @@
+<Window x:Class="BasicTimer.QuickPresetsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BasicTimer"
+        mc:Ignorable="d"
+        Title="Quick Timer Presets" Height="400" Width="300"
+        WindowStartupLocation="CenterScreen">
+    
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="Quick Timer Presets" 
+                   FontSize="16" FontWeight="Bold" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,15"/>
+
+        <!-- Preset Buttons -->
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            
+            <!-- Work/Focus Presets -->
+            <GroupBox Header="Work and Focus" Margin="0,0,0,8">
+                <StackPanel Orientation="Vertical" Margin="5">
+                    <Button Content="5 Minutes" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="300" FontSize="12"/>
+                    <Button Content="10 Minutes" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="600" FontSize="12"/>
+                    <Button Content="15 Minutes" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="900" FontSize="12"/>
+                    <Button Content="25 Minutes (Pomodoro)" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="1500" FontSize="12" FontWeight="Bold" Background="#FFE8F5E8"/>
+                    <Button Content="30 Minutes" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="1800" FontSize="12"/>
+                    <Button Content="45 Minutes" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="2700" FontSize="12"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Break Presets -->
+            <GroupBox Header="Breaks" Margin="0,0,0,8">
+                <StackPanel Orientation="Vertical" Margin="5">
+                    <Button Content="2 Minutes" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="120" FontSize="12"/>
+                    <Button Content="5 Minutes (Short Break)" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="300" FontSize="12" Background="#FFF0F8FF"/>
+                    <Button Content="15 Minutes (Long Break)" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="900" FontSize="12" Background="#FFF0F8FF"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Long Duration Presets -->
+            <GroupBox Header="Extended Sessions" Margin="0,0,0,8">
+                <StackPanel Orientation="Vertical" Margin="5">
+                    <Button Content="1 Hour" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="3600" FontSize="12"/>
+                    <Button Content="1.5 Hours" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="5400" FontSize="12"/>
+                    <Button Content="2 Hours" Height="35" Margin="0,2" Click="PresetButton_Click" Tag="7200" FontSize="12"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
+        <!-- Close Button -->
+        <Button Grid.Row="2" Content="Close" Width="80" Height="30" 
+                HorizontalAlignment="Center" Margin="0,15,0,0" 
+                Click="CloseButton_Click"/>
+    </Grid>
+</Window>

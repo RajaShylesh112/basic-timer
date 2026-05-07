@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:BasicTimer"
              StartupUri="TimerWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

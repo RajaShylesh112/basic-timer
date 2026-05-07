@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="ColorPickerWindow" Height="200" Width="300"
         WindowStartupLocation="CenterScreen"
+        KeyDown="ColorPickerWindow_KeyDown"
         >
     <Grid 
         x:Name="MainGrid"
@@ -16,6 +17,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <GroupBox 
@@ -56,6 +58,11 @@
                 TextChanged="BackgroundTextbox_TextChanged"
                 Text="#003366"/>
         </GroupBox>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10">
+            <Button Height="26" Padding="7 0" FontSize="16" Margin="0 0 10 0" Click="Button_OK_Click">OK</Button>
+            <Button Height="26" Padding="7 0" FontSize="16" Click="Button_Cancel_Click">Cancel</Button>
+        </StackPanel>
 
     </Grid>
 </Window>

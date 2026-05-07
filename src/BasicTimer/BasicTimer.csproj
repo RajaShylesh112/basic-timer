@@ -5,13 +5,19 @@
         <TargetFramework>net461</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
-        <Version>1.4</Version>
+        <Version>1.5</Version>
         <LangVersion>latest</LangVersion>
         <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+        <AssemblyName>BasicTimer</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
         <Content Include="Resources\icon.ico" />
     </ItemGroup>
 
+    <ItemGroup>
+        <!-- <PackageReference Include="ModernWpfUI" Version="0.9.6" /> -->
+    </ItemGroup>
+
 </Project>
+ 
